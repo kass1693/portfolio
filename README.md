@@ -10,6 +10,8 @@
 저에게 개발은 기능을 만드는 일이 아니라 **논리적 구조를 세우는 일**이며,  
 그 구조를 언어와 코드로 일관되게 표현하는 과정입니다.
 
+자세한 자기소개는 [**self-introduction.md**](./resume/self-introduction.md) 문서에서 확인할 수 있습니다.
+
 ---
 
 ## 2. 개발 철학 (Development Philosophy)
