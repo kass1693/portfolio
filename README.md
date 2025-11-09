@@ -71,10 +71,9 @@ graph TD
 ---
 
 ## 6. 프로젝트 구조 (Project Overview)
-현재 각 프로젝트별 디렉토리 구성 방안을 검토 중입니다.  
-확정 후 프로젝트별 README와 문서를 연결할 예정입니다.
+| 구분 | 파일 경로 | 설명 |
+|------|------------|------|
+| **Relion** | [`relion.md`](./embedded/relion.md) | AP 장비 환경에 실제 탑재될 REST API 프로젝트  |
+| **key fetcher** | [`key fetcher.md`](./embedded/key-fetcher.md) | 관리 프로토콜 암호화에 사용 될 암호화 key 교환 어플리케이션 |
+| **oceancloud** | [`oceancloud.md`](./web/oceancloud.md) | 환경 데이터 수집 플랫폼 |
 
----
-
-## 7. 향후 계획 (Next Steps)
-- 프로젝트별 디렉토리 구성
