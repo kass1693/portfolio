@@ -4,13 +4,15 @@
 
 ## 1. Executive Summary
 
-Relion은 **AP 장비 환경에 실제 탑재될 웹 프레임워크**로 개발 중인 프로젝트입니다.
+Relion은 **AP 장비 환경에 실제 탑재될 REST API**로 개발 중인 프로젝트입니다.
 
 C 언어 환경에서 Layered + Hexagonal 아키텍처를 완전 구현하여, Core-Framework-Application의 독립적 진화를 실현했습니다.
 
 **개발 배경**
 
-외부 APC(AP Controller)가 HTTP를 통해 AP 장비의 정보를 조회할 수 있도록 REST API 서버가 필요했습니다. 초기에 Mongoose 라이브러리를 적용했으나, GPL 라이선스로 인해 상용 제품 탑재가 불가능하여 Civetweb(MIT 라이선스)로 전환했습니다. 이 전환 과정에서 Core-Framework-Application 분리 구조의 유연성이 검증되었으며, HTTP 엔진 교체가 매우 원활하게 이루어졌습니다.
+AP 장비가 외부 APC(AP Controller)와 통신하기 위해서는, 장비 내부에서 REST API 서버가 동작해야 했습니다. 이를 위해 초기에는 Mongoose 기반의 HTTP 서버를 적용했습니다. 그러나 Mongoose가 GPL 라이선스를 사용하고 있어 상용 제품에 직접 포함할 수 없다는 제약이 드러났습니다. 이에 따라 동일한 기능을 유지하면서도 상용 배포가 가능한 MIT 라이선스 기반의 Civetweb으로 교체를 추진했습니다.
+
+이 과정에서 Core-Framework-Application이 완전히 분리된 Relion의 구조적 강점이 확인되었습니다. HTTP 엔진을 교체했음에도 Framework와 Application은 서로 영향을 받지 않았고, 하루 만에 전환이 완료되었습니다. 이 경험은 Relion이 단순한 서버 구현체가 아니라, 독립적으로 진화 가능한 구조적 프레임워크임을 입증한 사례였습니다.
 
 **핵심 달성 사항:**
 - **Core 교체 가능**: Civetweb ↔ Mongoose 전환 1일, Application 영향 0
@@ -48,7 +50,7 @@ Relion은 "설계의 완결"을 넘어, **운영 가능한 구조적 아키텍�
 ### 역할 및 환경
 
 - **역할**: 전체 아키텍처 설계 및 구현 주도
-- **기간**: 2025년 10월 ~ 현재 (진행 중, 3주 경과)
+- **기간**: 2025년 10월 ~ 현재 (진행 중)
 - **언어/기술**: C, Civetweb (MIT License), JSON-C
 - **목표**: AP 장비 탑재용 REST API 서버로 2025년 4분기 배포
 
