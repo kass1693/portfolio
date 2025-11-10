@@ -111,58 +111,71 @@ graph TB
     Client[HTTP Client]
     
     subgraph Core["Core Layer"]
-        Mongoose["Mongoose / libmicrohttpd / civetweb<br/>- HTTP 파싱, 소켓 관리<br/>- 이벤트 루프"]
+        HTTP[HTTP Engine<br/>CivetWeb/Mongoose]
     end
     
-    subgraph Framework["Framework Layer (libframework.a)"]
-        CoreAdapter["Core Adapter<br/>Port & Adapter Pattern"]
-        
-        subgraph PublicAPI["Public API (include/)"]
-            API["fw_lifecycle.h<br/>fw_router.h<br/>fw_middleware.h<br/>fw_json_*.h"]
-        end
-        
-        subgraph Internal["Internal Implementation"]
-            Router["Router, Middleware Chain"]
-            JSON["JSON Parser/Builder"]
-            Logger["Logger, Error Handler"]
-        end
-        
-        CoreAdapter --> Internal
-        Internal --> PublicAPI
+    subgraph Framework["Relion Framework (libframework.a)"]
+        CoreAdapter[Core Adapter]
+        Router[Router]
+        Middleware[Middleware Chain]
+        JSON[JSON Parser/Builder]
     end
     
-    subgraph Application["Application Binary (device_server)"]
-        Main["main.c<br/>- Framework 초기화<br/>- 라우트 등록<br/>- 미들웨어 설정"]
+    subgraph Application["Application Binary"]
+        Main[main.c<br/>Lifecycle]
         
-        Endpoint["Endpoint Layer<br/>REST 엔드포인트"]
-        Controller["Controller Layer<br/>요청 흐름 제어"]
-        UseCase["UseCase Layer<br/>비즈니스 로직"]
-        Domain["Domain Layer<br/>도메인 모델"]
-        Infra["Infrastructure Layer<br/>하드웨어/외부 라이브러리"]
-        Response["Response Module<br/>app_response_t"]
+        AppRouter[Router Module<br/>라우트 등록]
+        AppMiddleware[Middleware Module<br/>mw_logger, mw_cors]
+        
+        Endpoint[Endpoint Layer]
+        Controller[Controller Layer]
+        UseCase[UseCase Layer]
+        Domain[Domain Layer]
+        Infra[Infrastructure Layer]
+        
+        Response[Response Module<br/>app_response_t]
+        Adapter[Adapter Module<br/>타입 변환]
+        
+        Config[Config]
+        Logger[Logger]
+        Error[Error]
     end
     
-    Client -->|HTTP Request| Mongoose
-    Mongoose -->|Event Callback| CoreAdapter
-    CoreAdapter -->|fw_request_t| Router
+    Client -->|HTTP Request| HTTP
+    HTTP -->|Event Callback| CoreAdapter
+    CoreAdapter --> Router
+    Router --> Middleware
     
-    Main --> PublicAPI
-    Endpoint --> PublicAPI
-    Endpoint --> Response
+    Main -.->|Setup| AppRouter
+    Main -.->|Setup| AppMiddleware
+    
+    AppRouter --> Adapter
+    AppMiddleware --> Adapter
+    
+    Middleware -->|fw_invoke_route| Adapter
+    Adapter -->|Handler Call| Endpoint
     
     Endpoint --> Controller
     Controller --> UseCase
     UseCase --> Domain
     UseCase --> Infra
     
-    Controller -->|app_response_t| Response
-    Response -->|fw_response_t via adapter| CoreAdapter
-    CoreAdapter -->|mg_http_reply| Mongoose
-    Mongoose -->|HTTP Response| Client
+    Endpoint -->|JSON| Response
+    Response --> Adapter
+    Adapter -->|fw_response_t| Router
+    Router --> CoreAdapter
+    CoreAdapter -->|HTTP Reply| HTTP
+    HTTP -->|HTTP Response| Client
     
-    style PublicAPI fill:#e1f5e1
-    style Internal fill:#ffe1e1
+    Main -.-> Config
+    Main -.-> Logger
+    Main -.-> Error
+    
     style Response fill:#fff9c4
+    style Adapter fill:#e1bee7
+    style AppRouter fill:#e3f2fd
+    style AppMiddleware fill:#e3f2fd
+
 ```
 
 ---
@@ -253,22 +266,39 @@ fw_response_t* fw_invoke_route(
 
 ```mermaid
 graph TB
-    subgraph "Application"
-        EP[Endpoints<br/>Routing 등록]
-        CTRL[Controllers<br/>HTTP 처리]
-        UC[UseCases<br/>비즈니스 로직]
-        DOM[Domain<br/>핵심 규칙]
-        INF[Infrastructure<br/>외부 세계]
+    subgraph Application
+        Endpoint[Endpoint]
+        Controller[Controller]
+        UseCase[UseCase]
+        Response[Response Module]
+        Adapter[Adapter]
+        Middleware[Middleware]
+        Router[Router]
     end
     
-    EP -->|fw_register_route| FW[Framework]
-    FW -->|fw_invoke_route| EP
-    EP --> CTRL
-    CTRL --> UC
-    UC --> DOM
-    UC --> INF
+    subgraph Framework
+        FwRouter[Framework Router]
+        PublicAPI[Public API<br/>include/]
+        InvokeIface[fw_invoke_route<br/>interface]
+    end
     
-    CTRL -->|Response Adapter| FW
+    Endpoint -->|uses| PublicAPI
+    Endpoint -->|creates| Response
+    Controller -->|uses| PublicAPI
+    
+    Adapter -->|implements| InvokeIface
+    Adapter -->|uses| Response
+    
+    Router -->|uses| Adapter
+    Middleware -->|uses| Adapter
+    
+    FwRouter -->|calls| InvokeIface
+    InvokeIface -.->|implemented by| Adapter
+    
+    style Response fill:#fff9c4
+    style Adapter fill:#e1bee7
+    style InvokeIface fill:#fff4e1
+
 ```
 
 **구현 중인 API:**
