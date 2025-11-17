@@ -75,7 +75,7 @@ graph TD
 ## 6. 프로젝트 구조 (Project Overview)
 | 구분 | 파일 경로 | 설명 |
 |------|------------|------|
-| **Relion** | [`relion.md`](./embedded/relion.md) | AP 장비 환경에 실제 탑재될 REST API 프로젝트  |
+| **Relion** | [`relion.md`](./embedded/relion/README.md) | AP 장비 환경에 실제 탑재될 REST API 프로젝트  |
 | **key fetcher** | [`key fetcher.md`](./embedded/key-fetcher.md) | 관리 프로토콜 암호화에 사용 될 암호화 key 교환 어플리케이션 |
 | **oceancloud** | [`oceancloud.md`](./web/oceancloud.md) | 환경 데이터 수집 플랫폼 |
 
