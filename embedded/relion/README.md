@@ -586,7 +586,7 @@ Relion은 세 가지 관점에서 문서화되어 있습니다.
 - Response Adapter: 타입 변환 전략
 - DIP가 가져온 실제 이득
 
-**문서**: `relion-framework-perspective.md`
+**문서**: [`relion-framework-perspective.md`](./relion-framework-perspective.md)
 
 ### 7.2 프로젝트 관점
 
@@ -599,7 +599,7 @@ Relion은 세 가지 관점에서 문서화되어 있습니다.
 - Layer-check 빌드 시스템
 - 실무 이식 사례 (HTTP 엔진 전환, 장비 환경 대응)
 
-**문서**: `relion-project-perspective.md`
+**문서**: [`relion-project-perspective.md`](./relion-project-perspective.md)
 
 ### 7.3 읽는 순서
 
